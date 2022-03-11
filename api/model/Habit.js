@@ -1,6 +1,18 @@
 const db = require('../dbConfig/init');
 const SQL = require('sql-template-strings');
 
+const f_dates = (i) => {
+    var today = new Date();
+    var date = new Date(today.setDate(today.getDate() - i));
+    
+    var dd = String(date.getDate()).padStart(2, '0');
+    var mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = date.getFullYear();
+    
+    dateAsString = mm + '/' + dd + '/' + yyyy;
+    return dateAsString;
+    }
+
 class Habit {
 
     constructor(data){
