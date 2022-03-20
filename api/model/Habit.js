@@ -1,6 +1,18 @@
 const db = require('../dbConfig/init');
 const SQL = require('sql-template-strings');
 
+const f_dates = (i) => {
+    var today = new Date();
+    var date = new Date(today.setDate(today.getDate() - i));
+    
+    var dd = String(date.getDate()).padStart(2, '0');
+    var mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = date.getFullYear();
+    
+    dateAsString = mm + '/' + dd + '/' + yyyy;
+    return dateAsString;
+    }
+
 class Habit {
 
     constructor(data){
@@ -301,34 +313,14 @@ class Habit {
             try {
                 let count =[]
                 let dates = []
-
-                    let todayDate = await db.query(SQL`SELECT DISTINCT timeDone::DATE FROM habitCount WHERE timeDone::DATE = current_date;`)
     
-                    let todayHabitCount = await db.query(SQL`SELECT COUNT(*) FROM habitCount WHERE timeDone::DATE = current_date AND habit_id = ${id};`);
-    
-                    let yesterdayDate = await db.query(SQL`SELECT DISTINCT timeDone::DATE FROM habitCount WHERE timeDone::DATE = current_date - 1;`)
-    
-                    let yesterdayHabitCount = await db.query(SQL`SELECT COUNT(*) FROM habitCount WHERE timeDone::DATE = current_date - 1 AND habit_id = ${id};`);
-    
-                    let dayBeforeYdayDate = await db.query(SQL`SELECT DISTINCT timeDone::DATE FROM habitCount WHERE timeDone::DATE = current_date - 2;`)
-    
-                    let dayBeforeYdayHabitCount = await db.query(SQL`SELECT COUNT(*) FROM habitCount WHERE timeDone::DATE = current_date - 2 AND habit_id = ${id};`);
-    
-                    let threeDaysBeforeDate = await db.query(SQL`SELECT DISTINCT timeDone::DATE FROM habitCount WHERE timeDone::DATE = current_date - 3;`)
-    
-                    let threeDaysBeforeHabitCount = await db.query(SQL`SELECT COUNT(*) FROM habitCount WHERE timeDone::DATE = current_date - 3 AND habit_id = ${id};`);
-    
-                    let fourDaysBeforeDate = await db.query(SQL`SELECT DISTINCT timeDone::DATE FROM habitCount WHERE timeDone::DATE = current_date - 4;`)
-    
-                    let fourDaysBeforeHabitCount = await db.query(SQL`SELECT COUNT(*) FROM habitCount WHERE timeDone::DATE = current_date - 4 AND habit_id = ${id};`);
-    
-                    let fiveDaysBeforeDate = await db.query(SQL`SELECT DISTINCT timeDone::DATE FROM habitCount WHERE timeDone::DATE = current_date - 5;`)
-    
-                    let fiveDaysBeforeHabitCount = await db.query(SQL`SELECT COUNT(*) FROM habitCount WHERE timeDone::DATE = current_date - 5 AND habit_id = ${id};`);
-    
-                    let sixDaysBeforeDate = await db.query(SQL`SELECT DISTINCT timeDone::DATE FROM habitCount WHERE timeDone::DATE = current_date - 6;`)
-    
-                    let sixDaysBeforeHabitCount = await db.query(SQL`SELECT COUNT(*) FROM habitCount WHERE timeDone::DATE = current_date - 6 AND habit_id = ${id};`);
+                let todayHabitCount = await db.query(SQL`SELECT COUNT(*) FROM habitCount WHERE timeDone::DATE = current_date AND habit_id = ${id};`);
+                let yesterdayHabitCount = await db.query(SQL`SELECT COUNT(*) FROM habitCount WHERE timeDone::DATE = current_date - 1 AND habit_id = ${id};`);
+                let dayBeforeYdayHabitCount = await db.query(SQL`SELECT COUNT(*) FROM habitCount WHERE timeDone::DATE = current_date - 2 AND habit_id = ${id};`);
+                let threeDaysBeforeHabitCount = await db.query(SQL`SELECT COUNT(*) FROM habitCount WHERE timeDone::DATE = current_date - 3 AND habit_id = ${id};`);
+                let fourDaysBeforeHabitCount = await db.query(SQL`SELECT COUNT(*) FROM habitCount WHERE timeDone::DATE = current_date - 4 AND habit_id = ${id};`);
+                let fiveDaysBeforeHabitCount = await db.query(SQL`SELECT COUNT(*) FROM habitCount WHERE timeDone::DATE = current_date - 5 AND habit_id = ${id};`);
+                let sixDaysBeforeHabitCount = await db.query(SQL`SELECT COUNT(*) FROM habitCount WHERE timeDone::DATE = current_date - 6 AND habit_id = ${id};`);
                     
                     count = [
                         todayHabitCount.rows[0].count,
@@ -341,17 +333,17 @@ class Habit {
                         ]
 
                     dates = [
-                        todayDate.rows[0].timedone,
-                        yesterdayDate.rows[0].timedone,
-                        dayBeforeYdayDate.rows[0].timedone,
-                        threeDaysBeforeDate.rows[0].timedone,
-                        fourDaysBeforeDate.rows[0].timedone,
-                        fiveDaysBeforeDate.rows[0].timedone,
-                        sixDaysBeforeDate.rows[0].timedone
+                        f_dates(0),
+                        f_dates(1),
+                        f_dates(2),
+                        f_dates(3),
+                        f_dates(4),
+                        f_dates(5),
+                        f_dates(6),
                     ]
 
 
-                    res({dates,count})
+                res({dates,count})
 
             } catch (err) {
                 rej(`There was an error retrieving that graph data: ${err}`)
